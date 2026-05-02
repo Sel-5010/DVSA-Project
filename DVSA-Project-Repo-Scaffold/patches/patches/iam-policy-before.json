@@ -1,0 +1,61 @@
+{
+  "note": "Before remediation: original over-privileged policies attached to the DVSA-SEND-RECEIPT-EMAIL role.",
+  "AmazonSESFullAccess": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": [
+          "ses:*"
+        ],
+        "Resource": "*"
+      }
+    ]
+  },
+  "SendReceiptFunctionRolePolicy1_S3": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": [
+          "s3:GetObject",
+          "s3:ListBucket",
+          "s3:GetBucketLocation",
+          "s3:GetObjectVersion",
+          "s3:PutObject",
+          "s3:PutObjectAcl",
+          "s3:GetLifecycleConfiguration",
+          "s3:PutLifecycleConfiguration",
+          "s3:DeleteObject"
+        ],
+        "Resource": [
+          "arn:aws:s3:::*",
+          "arn:aws:s3:::*/*"
+        ]
+      }
+    ]
+  },
+ "SendReceiptFunctionRolePolicy2_DynamoDB": {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:PutItem",
+        "dynamodb:Scan",
+        "dynamodb:Query",
+        "dynamodb:UpdateItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:BatchGetItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:ConditionCheckItem"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:us-east-1:836739852202:table/*",
+        "arn:aws:dynamodb:us-east-1:836739852202:table/*/index/*"
+      ]
+    }
+  ]
+}
