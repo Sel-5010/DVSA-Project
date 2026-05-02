@@ -35,27 +35,28 @@
       }
     ]
   },
- "SendReceiptFunctionRolePolicy2_DynamoDB": {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "dynamodb:GetItem",
-        "dynamodb:DeleteItem",
-        "dynamodb:PutItem",
-        "dynamodb:Scan",
-        "dynamodb:Query",
-        "dynamodb:UpdateItem",
-        "dynamodb:BatchWriteItem",
-        "dynamodb:BatchGetItem",
-        "dynamodb:DescribeTable",
-        "dynamodb:ConditionCheckItem"
-      ],
-      "Resource": [
-        "arn:aws:dynamodb:us-east-1:836739852202:table/*",
-        "arn:aws:dynamodb:us-east-1:836739852202:table/*/index/*"
-      ]
-    }
-  ]
+  "SendReceiptFunctionRolePolicy2_DynamoDB": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": [
+          "dynamodb:GetItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:PutItem",
+          "dynamodb:Scan",
+          "dynamodb:Query",
+          "dynamodb:UpdateItem",
+          "dynamodb:BatchWriteItem",
+          "dynamodb:BatchGetItem",
+          "dynamodb:DescribeTable",
+          "dynamodb:ConditionCheckItem"
+        ],
+        "Resource": [
+          "arn:aws:dynamodb:us-east-1:836739852202:table/*",
+          "arn:aws:dynamodb:us-east-1:836739852202:table/*/index/*"
+        ]
+      }
+    ]
+  }
 }
