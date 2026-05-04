@@ -155,6 +155,63 @@ Sensitive receipt data should only be exposed through authorized receipt or admi
 In serverless applications, IAM permissions are part of the security boundary.  
 Even if one Lambda is abused, it should not be able to invoke privileged admin functions unless that access is strictly required.
 
+
+# Lesson 4 - Insecure Cloud Configuration
+
+## Purpose
+
+Demonstrate that DVSA allows a `.raw` receipt object to be uploaded directly into the S3 receipts bucket and that this upload triggers the backend `DVSA-SEND-RECEIPT-EMAIL` Lambda function.
+
+After the fix, suspicious S3 object keys should be rejected by the Lambda function before receipt processing continues.
+
+## Environment
+
+- AWS Region: `us-east-1`
+- S3 receipts bucket: `dvsa-receipts-bucket-836739852202-us-east-1`
+- Lambda function: `DVSA-SEND-RECEIPT-EMAIL`
+- Lambda file patched: `send_receipt_email.py`
+- CloudWatch log group: `/aws/lambda/DVSA-SEND-RECEIPT-EMAIL`
+- Tools:
+  - AWS Console
+  - AWS CloudShell
+  - Amazon S3
+  - AWS Lambda
+  - CloudWatch Logs
+
+## Evidence Files
+
+Minimum screenshots used for this lesson:
+
+1. `evidence/lesson-04/l04-01-acl-before.png`  
+   Shows the receipts bucket ACL/permission area before remediation.
+
+2. `evidence/lesson-04/l04-02-upload-success-before.png`  
+   Shows successful direct upload of a `.raw` object into the receipts bucket.
+
+3. `evidence/lesson-04/l04-03-cloudwatch-lambda-triggered-before.png`  
+   Shows that `DVSA-SEND-RECEIPT-EMAIL` was triggered after the `.raw` upload.
+
+4. `evidence/lesson-04/l04-04-suspicious-key-rejected-after-fix.png`  
+   Shows CloudWatch output after remediation where the Lambda rejects a suspicious S3 object key.
+
+## Reproduction Summary
+
+1. Opened the S3 receipts bucket.
+2. Reviewed the ACL/permissions area.
+3. Used AWS CloudShell to upload a harmless `.raw` file directly to the receipts bucket.
+4. Checked CloudWatch Logs for `/aws/lambda/DVSA-SEND-RECEIPT-EMAIL`.
+5. Confirmed that the uploaded `.raw` object triggered the Lambda function.
+
+## Fix Summary
+
+The fix was applied inside `send_receipt_email.py`.
+
+The Lambda now validates the S3 object key using an allowlisted pattern before processing. The accepted format is:
+
+```text
+YYYY/MM/DD/orderId_userId.raw
+```
+
 # Lesson 5 - Broken Access Control
 
 ## Purpose
