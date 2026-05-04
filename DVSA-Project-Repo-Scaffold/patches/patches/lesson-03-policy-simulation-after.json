@@ -1,0 +1,13 @@
+[
+  {
+    "Action": "lambda:InvokeFunction",
+    "Resource": "arn:aws:lambda:us-east-1:836739852202:function:DVSA-ADMIN-GET-RECEIPT",
+    "Decision": "explicitDeny",
+    "Matched": [
+      {
+        "SourcePolicyId": "role_serverlessrepo-OWASP-DVSA-OrderManagerFunctionRole-AYgjVNRacMMy_DenyDVSAAdminInvokeForLesson3",
+        "SourcePolicyType": "IAM Policy"
+      }
+    ]
+  }
+]
