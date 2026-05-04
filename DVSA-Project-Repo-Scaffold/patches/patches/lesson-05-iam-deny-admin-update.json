@@ -1,0 +1,14 @@
+Replace `ACCOUNT_ID` with your real AWS account ID.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyAdminUpdateInvoke",
+      "Effect": "Deny",
+      "Action": "lambda:InvokeFunction",
+      "Resource": "arn:aws:lambda:us-east-1:ACCOUNT_ID:function:*ADMIN*UPDATE*ORDERS*"
+    }
+  ]
+}
