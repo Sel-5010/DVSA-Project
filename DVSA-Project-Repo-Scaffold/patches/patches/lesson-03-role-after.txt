@@ -1,0 +1,27 @@
+Lesson 3 - Sensitive Information Disclosure Fix
+
+Affected public Lambda:
+DVSA-ORDER-MANAGER
+
+Privileged admin Lambda:
+DVSA-ADMIN-GET-RECEIPT
+
+Execution role after fix:
+arn:aws:iam::836739852202:role/serverlessrepo-OWASP-DVSA-OrderManagerFunctionRole-AYgjVNRacMMy
+
+Fix applied:
+An explicit IAM deny policy was added to the DVSA-ORDER-MANAGER execution role.
+
+Policy name:
+DenyDVSAAdminInvokeForLesson3
+
+Policy effect:
+Deny lambda:InvokeFunction on:
+arn:aws:lambda:us-east-1:836739852202:function:DVSA-ADMIN-*
+
+Security result:
+DVSA-ORDER-MANAGER can no longer invoke DVSA-ADMIN-GET-RECEIPT.
+This blocks the receipt ZIP signed URL disclosure path.
+
+Post-fix verification:
+IAM policy simulation returned explicitDeny for lambda:InvokeFunction against DVSA-ADMIN-GET-RECEIPT.
