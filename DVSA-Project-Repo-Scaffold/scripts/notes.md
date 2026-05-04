@@ -234,8 +234,9 @@ This prevents the public order manager function from invoking the privileged adm
 Patch saved in:
 
 ```text
-```
 patches/patches/lesson-05-iam-deny-admin-update.json
+```
+
 
 # Lesson 7 - Over-Privileged Function
 
