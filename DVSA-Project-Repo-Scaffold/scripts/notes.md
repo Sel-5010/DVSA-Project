@@ -61,6 +61,99 @@ export API="https://<api-id>.execute-api.us-east-1.amazonaws.com/dvsa/order"
 export TOKEN_B="<User B JWT>"
 export TOKEN_C="<User C JWT>"
 ```
+# Lesson 3 Notes
+
+## Vulnerability
+
+Sensitive Information Disclosure.
+
+## Affected components
+
+- Public API path: `/order`
+- Public Lambda: `DVSA-ORDER-MANAGER`
+- Privileged Lambda: `DVSA-ADMIN-GET-RECEIPT`
+- Storage: DVSA receipts S3 bucket
+- Output exposed: signed S3 URL for receipt ZIP file
+
+## Exploit summary
+
+Lesson 3 reused the vulnerable `/order` path.  
+A crafted request caused `DVSA-ORDER-MANAGER` to invoke the privileged admin receipt function:
+
+`DVSA-ADMIN-GET-RECEIPT`
+
+That function generated a signed S3 URL for a receipt ZIP file.  
+The signed URL was copied from the response/log output and used with `curl -L` to download:
+
+`lesson3-receipts.zip`
+
+Then `unzip -l lesson3-receipts.zip` confirmed that the ZIP file was accessible.
+
+## Main proof
+
+The main proof before the fix was:
+
+- signed S3 receipt ZIP URL was returned
+- `curl -L` successfully downloaded the ZIP
+- `unzip -l` listed the ZIP contents
+
+Important evidence files:
+
+- `evidence/lesson-03/L03-03-signed-url-response.png`
+- `evidence/lesson-03/L03-04-downloaded-zip-listing.png`
+
+## Root cause
+
+The public order-processing Lambda could reach a privileged admin receipt-export function.  
+This broke the intended authorization boundary because a normal public workflow should not be able to generate admin receipt ZIP download links.
+
+## Fix
+
+An explicit IAM deny policy was added to the execution role used by:
+
+`DVSA-ORDER-MANAGER`
+
+The policy denies:
+
+`lambda:InvokeFunction`
+
+on:
+
+`arn:aws:lambda:us-east-1:836739852202:function:DVSA-ADMIN-*`
+
+This includes:
+
+`DVSA-ADMIN-GET-RECEIPT`
+
+## Fix files
+
+- `patches/patches/lesson-03-deny-dvsa-admin-invoke.json`
+- `patches/patches/lesson-03-role-after.txt`
+- `patches/patches/lesson-03-policy-simulation-after.json`
+
+## Verification
+
+The fix was verified with IAM policy simulation.
+
+The simulation checked whether the `DVSA-ORDER-MANAGER` role could invoke:
+
+`DVSA-ADMIN-GET-RECEIPT`
+
+The result was:
+
+`explicitDeny`
+
+This proves that the receipt ZIP disclosure path is blocked after the fix.
+
+Important evidence file:
+
+- `evidence/lesson-03/L03-07-policy-simulator-explicit-deny.png`
+
+## Takeaway
+
+Sensitive receipt data should only be exposed through authorized receipt or admin workflows.  
+In serverless applications, IAM permissions are part of the security boundary.  
+Even if one Lambda is abused, it should not be able to invoke privileged admin functions unless that access is strictly required.
 
 # Lesson 7 - Over-Privileged Function
 
